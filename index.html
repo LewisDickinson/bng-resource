@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BNG Staffing Economics — is your habitat bank affordable to run?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EFE6;
+    --paper-raised:#FBF9F3;
+    --ink:#1F2A1D;
+    --ink-soft:#4A5245;
+    --moss:#4B6043;
+    --moss-dark:#37472F;
+    --amber:#C17817;
+    --brick:#A83E3E;
+    --dyke:#3C6E82;
+    --hairline:#CFC7AC;
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important;} }
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif; font-size:15.5px; line-height:1.5;}
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:600; margin:0;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  :focus-visible{outline:2px solid var(--dyke); outline-offset:2px;}
+
+  .wrap{max-width:920px; margin:0 auto; padding:0 22px;}
+
+  header.top{border-bottom:1px solid var(--hairline); background:var(--paper-raised);}
+  .top-inner{max-width:920px; margin:0 auto; padding:16px 22px; display:flex; align-items:baseline; gap:10px;}
+  .top-inner .mark{font-size:15px; font-weight:600; font-family:'Fraunces',serif;}
+  .top-inner .tag{font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.1em;}
+
+  /* Hero */
+  .hero{padding:56px 0 40px;}
+  .hero .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--moss-dark);
+    text-transform:uppercase; letter-spacing:0.12em; margin-bottom:14px; display:flex; align-items:center; gap:8px;}
+  .hero .eyebrow::before{content:''; width:16px; height:1px; background:var(--moss);}
+  .hero h1{font-size:clamp(28px,4.4vw,42px); line-height:1.12; max-width:15ch; margin-bottom:18px;}
+  .hero p.lede{font-size:16.5px; color:var(--ink-soft); max-width:56ch; margin-bottom:0;}
+
+  /* Runway signature visual */
+  .runway{margin-top:34px; border:1px solid var(--hairline); background:var(--paper-raised); border-radius:var(--radius); padding:18px 20px 14px;}
+  .runway-label{display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px;}
+  .runway-track{position:relative; height:34px; background:linear-gradient(90deg, var(--hairline) 1px, transparent 1px); background-size:calc(100%/30) 100%; border-radius:2px; overflow:hidden; border:1px solid var(--hairline);}
+  .runway-fill{position:absolute; top:0; left:0; bottom:0; width:0%; background:linear-gradient(90deg, var(--moss), var(--moss-dark)); animation:fillRunway 2.2s ease-out 0.3s forwards;}
+  .runway-gap{position:absolute; top:0; bottom:0; right:0; width:0%; background:repeating-linear-gradient(135deg, var(--brick) 0 6px, transparent 6px 12px); opacity:0.55; animation:fillGap 2.2s ease-out 0.3s forwards;}
+  @keyframes fillRunway{ from{width:0%;} to{width:58%;} }
+  @keyframes fillGap{ from{width:0%;} to{width:42%;} }
+  .runway-foot{display:flex; justify-content:space-between; margin-top:8px; font-size:11px; color:var(--ink-soft);}
+  .runway-foot span.key{display:inline-flex; align-items:center; gap:5px;}
+  .runway-foot i{width:9px; height:9px; display:inline-block; border-radius:1px;}
+  @media (prefers-reduced-motion: reduce){ .runway-fill{width:58%; animation:none;} .runway-gap{width:42%; animation:none;} }
+
+  /* Purpose */
+  .purpose{padding:6px 0 44px; border-bottom:1px solid var(--hairline);}
+  .purpose-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:22px;}
+  .purpose-item .num{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--moss-dark); margin-bottom:6px;}
+  .purpose-item h3{font-size:15px; margin-bottom:6px;}
+  .purpose-item p{font-size:13.5px; color:var(--ink-soft); margin:0;}
+
+  /* Quiz */
+  .quiz{padding:44px 0 8px;}
+  .quiz h2{font-size:19px; margin-bottom:4px;}
+  .quiz .sub{font-size:13.5px; color:var(--ink-soft); margin-bottom:22px; max-width:56ch;}
+  .q-block{margin-bottom:22px;}
+  .q-block .q-label{font-size:11.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-soft); margin-bottom:10px; font-weight:600;}
+  .q-options{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  @media (max-width:620px){ .q-options{grid-template-columns:1fr;} }
+  .q-opt{
+    border:1px solid var(--hairline); background:var(--paper-raised); border-radius:var(--radius);
+    padding:12px 14px; font-size:13.5px; text-align:left; color:var(--ink); transition:border-color .12s, background .12s;
+  }
+  .q-opt:hover{border-color:var(--moss);}
+  .q-opt.selected{border-color:var(--moss); background:#E4E9DD; box-shadow:inset 0 0 0 1px var(--moss);}
+
+  .recommendation{
+    margin-top:22px; border-left:3px solid var(--moss); background:#E4E9DD; border-radius:2px;
+    padding:14px 16px; font-size:14px; display:none;
+  }
+  .recommendation.show{display:block;}
+  .recommendation .rec-label{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--moss-dark); font-weight:600; margin-bottom:4px;}
+  .recommendation a.rec-link{color:var(--moss-dark); text-decoration:underline; font-weight:500;}
+
+  /* Model cards */
+  .models{padding:40px 0 60px;}
+  .models h2{font-size:19px; margin-bottom:4px;}
+  .models .sub{font-size:13.5px; color:var(--ink-soft); margin-bottom:22px;}
+  .card-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  @media (max-width:700px){ .card-grid{grid-template-columns:1fr;} }
+  .model-card{
+    border:1px solid var(--hairline); background:var(--paper-raised); border-radius:var(--radius);
+    padding:22px; display:flex; flex-direction:column; position:relative; transition:border-color .15s;
+  }
+  .model-card[data-highlight="true"]{border-color:var(--moss); box-shadow:0 0 0 1px var(--moss);}
+  .model-card .badge-rec{
+    position:absolute; top:-10px; left:18px; background:var(--moss); color:var(--paper-raised);
+    font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 9px; border-radius:10px; font-weight:500;
+    display:none;
+  }
+  .model-card[data-highlight="true"] .badge-rec{display:inline-block;}
+  .model-card .kicker{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;}
+  .model-card h3{font-size:19px; margin-bottom:8px;}
+  .model-card .who{font-size:12.5px; color:var(--moss-dark); font-weight:500; margin-bottom:12px;}
+  .model-card p.desc{font-size:13.5px; color:var(--ink-soft); margin:0 0 16px; flex-grow:1;}
+  .model-card ul{margin:0 0 20px; padding-left:18px; font-size:13px; color:var(--ink-soft);}
+  .model-card ul li{margin-bottom:4px;}
+  .model-card .cta{
+    display:inline-block; text-align:center; background:var(--moss); color:var(--paper-raised);
+    border:none; padding:11px 18px; font-size:13.5px; font-weight:500; border-radius:2px; text-decoration:none;
+  }
+  .model-card .cta:hover{background:var(--moss-dark);}
+  .model-card.detailed .cta{background:var(--dyke);}
+  .model-card.detailed .cta:hover{background:#2E5766;}
+
+  footer{border-top:1px solid var(--hairline); padding:26px 0 40px;}
+  footer p{font-size:12px; color:var(--ink-soft); max-width:60ch; margin:0;}
+
+  @media (max-width:700px){
+    .purpose-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <span class="mark">BNG Staffing Economics</span>
+    <span class="tag">habitat bank resourcing models</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">For habitat bank owners &amp; operators</div>
+    <h1>Can this habitat bank actually afford to pay someone?</h1>
+    <p class="lede">Biodiversity Net Gain units come with a 30-year delivery obligation — but unit sale revenue is a one-off, and staffing, overhead and habitat management costs run every year until the obligation ends. These two models turn that mismatch into numbers you can test, so you know before you commit whether the economics support hiring extra resource to deliver it.</p>
+
+    <div class="runway">
+      <div class="runway-label"><span>Illustrative unit revenue vs. 30-year obligation</span><span class="mono">years 1–30</span></div>
+      <div class="runway-track">
+        <div class="runway-fill"></div>
+        <div class="runway-gap"></div>
+      </div>
+      <div class="runway-foot">
+        <span class="key"><i style="background:var(--moss)"></i>funded by unit revenue</span>
+        <span class="key"><i style="background:var(--brick); opacity:.55"></i>unfunded shortfall</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="purpose">
+    <div class="purpose-grid">
+      <div class="purpose-item">
+        <div class="num mono">01</div>
+        <h3>See the real funding gap</h3>
+        <p>Unit sales happen once. Salaries, overhead and habitat delivery costs happen every year, and inflate. These models show how many years one lump sum of revenue actually buys.</p>
+      </div>
+      <div class="purpose-item">
+        <div class="num mono">02</div>
+        <h3>Test hiring before you commit</h3>
+        <p>Model adding a ranger, monitoring officer, or wider team against your bank's actual unit mix and price — before the cost hits a real payroll.</p>
+      </div>
+      <div class="purpose-item">
+        <div class="num mono">03</div>
+        <h3>Know where the levers are</h3>
+        <p>More units doesn't always mean more years of funding. See which levers — price, overhead, team size, habitat mix — actually move viability.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="quiz">
+    <h2>Which version do you need?</h2>
+    <p class="sub">Answer these two and we'll point you at the right one — both are free to use either way.</p>
+
+    <div class="q-block" data-q="1">
+      <div class="q-label">How many habitat types are on your bank (or planned)?</div>
+      <div class="q-options">
+        <button class="q-opt" data-value="one">Just one habitat type</button>
+        <button class="q-opt" data-value="many">More than one, or not sure yet</button>
+      </div>
+    </div>
+
+    <div class="q-block" data-q="2">
+      <div class="q-label">What are you after right now?</div>
+      <div class="q-options">
+        <button class="q-opt" data-value="quick">A quick gut-check on whether it's worth it</button>
+        <button class="q-opt" data-value="detailed">A detailed breakdown by habitat and role</button>
+      </div>
+    </div>
+
+    <div class="recommendation" id="recommendation">
+      <div class="rec-label">Suggested for you</div>
+      <div id="rec-text"></div>
+    </div>
+  </section>
+
+  <section class="models">
+    <h2>The two models</h2>
+    <p class="sub">Same underlying logic — unit revenue, costs, and inflation, tested against the 30-year obligation. Different level of detail.</p>
+
+    <div class="card-grid">
+      <div class="model-card simple" id="card-simple" data-highlight="false">
+        <span class="badge-rec">Suggested</span>
+        <div class="kicker">Model 01</div>
+        <h3>BNG economics model — simple</h3>
+        <div class="who">For: people exploring whether to start a habitat bank at all</div>
+        <p class="desc">A single-habitat, single-price view. Set your units, price, team size and salary, and see straight away whether the numbers are anywhere close to funding the full 30-year obligation.</p>
+        <ul>
+          <li>One habitat type at a time</li>
+          <li>Units, price, team size, inflation</li>
+          <li>Fastest way to a crude viability check</li>
+        </ul>
+        <a class="cta" href="./simple/">Open the simple model →</a>
+      </div>
+
+      <div class="model-card detailed" id="card-detailed" data-highlight="false">
+        <span class="badge-rec">Suggested</span>
+        <div class="kicker">Model 02</div>
+        <h3>BNG economics model — detailed</h3>
+        <div class="who">For: people running or actively planning a real, mixed-habitat bank</div>
+        <p class="desc">Build out your actual habitat mix and your actual team — different broad habitats at different prices, multiple roles at different salaries — pooled into one shared funding picture.</p>
+        <ul>
+          <li>Multiple habitat rows, priced individually</li>
+          <li>Multiple role rows, individually salaried</li>
+          <li>Set-up costs, inflation, and data export</li>
+        </ul>
+        <a class="cta" href="./detailed/">Open the detailed model →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Both models use figures you enter — estimates for establishment and ongoing habitat costs are starting points to edit, not sourced data. Treat outputs as a starting conversation, not financial advice.</p>
+  </div>
+</footer>
+
+<script>
+  const answers = { 1: null, 2: null };
+  const recBox = document.getElementById('recommendation');
+  const recText = document.getElementById('rec-text');
+  const cardSimple = document.getElementById('card-simple');
+  const cardDetailed = document.getElementById('card-detailed');
+
+  document.querySelectorAll('.q-block').forEach(block => {
+    const qNum = block.dataset.q;
+    block.querySelectorAll('.q-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        block.querySelectorAll('.q-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        answers[qNum] = opt.dataset.value;
+        updateRecommendation();
+      });
+    });
+  });
+
+  function updateRecommendation(){
+    if(!answers[1] || !answers[2]) return;
+    const wantsSimple = answers[1] === 'one' && answers[2] === 'quick';
+    const wantsDetailed = answers[1] === 'many' || answers[2] === 'detailed';
+
+    cardSimple.dataset.highlight = 'false';
+    cardDetailed.dataset.highlight = 'false';
+
+    if(wantsSimple){
+      cardSimple.dataset.highlight = 'true';
+      recText.innerHTML = 'Start with the <a class="rec-link" href="./simple/">simple model</a> — one habitat, one quick answer on viability.';
+    } else if(wantsDetailed){
+      cardDetailed.dataset.highlight = 'true';
+      recText.innerHTML = 'Go straight to the <a class="rec-link" href="./detailed/">detailed model</a> — it handles a real mixed habitat bank and team.';
+    } else {
+      cardSimple.dataset.highlight = 'true';
+      recText.innerHTML = 'Either works — the <a class="rec-link" href="./simple/">simple model</a> is the faster starting point.';
+    }
+    recBox.classList.add('show');
+  }
+</script>
+
+</body>
+</html>
