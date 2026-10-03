@@ -32,10 +32,14 @@
 
   .wrap{max-width:920px; margin:0 auto; padding:0 22px;}
 
-  header.top{border-bottom:1px solid var(--hairline); background:var(--paper-raised);}
-  .top-inner{max-width:920px; margin:0 auto; padding:16px 22px; display:flex; align-items:baseline; gap:10px;}
-  .top-inner .mark{font-size:15px; font-weight:600; font-family:'Fraunces',serif;}
-  .top-inner .tag{font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.1em;}
+  .site-nav{border-bottom:1px solid var(--hairline); background:var(--paper-raised);}
+  .site-nav-inner{max-width:1100px; margin:0 auto; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .site-nav-brand{font-family:'Fraunces',serif; font-weight:600; font-size:15px; color:var(--ink); text-decoration:none;}
+  .site-nav-links{display:flex; gap:4px;}
+  .site-nav-link{font-size:13px; color:var(--ink-soft); text-decoration:none; padding:7px 12px; border-radius:2px;}
+  .site-nav-link:hover{background:var(--paper); color:var(--ink);}
+  .site-nav-link.active{background:var(--moss); color:var(--paper-raised); font-weight:500;}
+  @media (max-width:560px){ .site-nav-inner{flex-direction:column; align-items:flex-start;} }
 
   /* Hero */
   .hero{padding:56px 0 40px;}
@@ -129,10 +133,15 @@
 </head>
 <body>
 
-<header class="top">
-  <div class="top-inner">
-    <span class="mark">BNG Staffing Economics</span>
-    <span class="tag">habitat bank resourcing models</span>
+<header class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="site-nav-brand">BNG Staffing Economics</a>
+    <nav class="site-nav-links">
+      <a href="/" class="site-nav-link active">Home</a>
+      <a href="/simple/" class="site-nav-link">Simple model</a>
+      <a href="/detailed/" class="site-nav-link">Detailed model</a>
+      <a href="/about/" class="site-nav-link">About</a>
+    </nav>
   </div>
 </header>
 
@@ -141,7 +150,7 @@
   <section class="hero">
     <div class="eyebrow">For habitat bank owners &amp; operators</div>
     <h1>Can this habitat bank actually afford to pay someone?</h1>
-    <p class="lede">Biodiversity Net Gain units come with a 30-year delivery obligation. To deliver, you need to fund staff, overheads and habitat management costs that run every year until the obligation ends. These two models allow you to test the numbers, so you know before you commit whether the economics support hiring extra resource to deliver it.</p>
+    <p class="lede">Biodiversity Net Gain units come with a 30-year delivery obligation — but unit sale revenue is a one-off, and staffing, overhead and habitat management costs run every year until the obligation ends. These two models turn that mismatch into numbers you can test, so you know before you commit whether the economics support hiring extra resource to deliver it.</p>
 
     <div class="runway">
       <div class="runway-label"><span>Illustrative unit revenue vs. 30-year obligation</span><span class="mono">years 1–30</span></div>
@@ -160,18 +169,18 @@
     <div class="purpose-grid">
       <div class="purpose-item">
         <div class="num mono">01</div>
-        <h3>Explore the funding gap</h3>
-        <p>Unit sales happen once. Salaries, overhead and habitat delivery costs recur every year, with inflation. These models show how many years unit revenue funds.</p>
+        <h3>See the real funding gap</h3>
+        <p>Unit sales happen once. Salaries, overhead and habitat delivery costs happen every year, and inflate. These models show how many years one lump sum of revenue actually buys.</p>
       </div>
       <div class="purpose-item">
         <div class="num mono">02</div>
         <h3>Test hiring before you commit</h3>
-        <p>Model adding a ranger, monitoring officer, or wider team against your bank's unit mix and price.</p>
+        <p>Model adding a ranger, monitoring officer, or wider team against your bank's actual unit mix and price — before the cost hits a real payroll.</p>
       </div>
       <div class="purpose-item">
         <div class="num mono">03</div>
         <h3>Know where the levers are</h3>
-        <p>See which levers — price, overhead, team size, habitat mix — adjust viability.</p>
+        <p>More units doesn't always mean more years of funding. See which levers — price, overhead, team size, habitat mix — actually move viability.</p>
       </div>
     </div>
   </section>
@@ -191,7 +200,7 @@
     <div class="q-block" data-q="2">
       <div class="q-label">What are you after right now?</div>
       <div class="q-options">
-        <button class="q-opt" data-value="quick">A quick assessment on whether it's worth it</button>
+        <button class="q-opt" data-value="quick">A quick gut-check on whether it's worth it</button>
         <button class="q-opt" data-value="detailed">A detailed breakdown by habitat and role</button>
       </div>
     </div>
@@ -267,7 +276,7 @@
   function updateRecommendation(){
     if(!answers[1] || !answers[2]) return;
     const wantsSimple = answers[2] === 'quick';
-    const wantsDetailed = answers[1] === 'many' || answers[2] === 'detailed';
+    const wantsDetailed = answers[2] === 'detailed';
 
     cardSimple.dataset.highlight = 'false';
     cardDetailed.dataset.highlight = 'false';

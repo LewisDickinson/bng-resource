@@ -72,8 +72,8 @@ function makeHabitatRow(presetKey, customLabel = "") {
   };
 }
 
-function makeRoleRow(label, salary, headcount) {
-  return { id: nextId(), label, salary, headcount };
+function makeRoleRow(label, salary, headcount, type = "employed") {
+  return { id: nextId(), label, salary, headcount, type };
 }
 
 export default function BNGEconomicsModelDetailed() {
@@ -127,7 +127,8 @@ export default function BNGEconomicsModelDetailed() {
     const totalCurrentUnits = habitatRows.reduce((s, r) => s + r.units, 0);
     const roleCost = roleRows.reduce((s, r) => s + r.salary * r.headcount, 0);
     const totalHeadcount = roleRows.reduce((s, r) => s + r.headcount, 0);
-    const overheadCost = overheadPerRole * totalHeadcount;
+    const employedHeadcount = roleRows.reduce((s, r) => s + (r.type !== "contractor" ? r.headcount : 0), 0);
+    const overheadCost = overheadPerRole * employedHeadcount;
 
     function grossRevenueAtScale(scale) {
       return habitatRows.reduce((sum, r) => {
@@ -234,8 +235,8 @@ export default function BNGEconomicsModelDetailed() {
     ];
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(habitatData), "Habitat mix");
 
-    const roleHeader = ["Role", "Full salary inc. on-costs, pension, etc (£)", "Headcount"];
-    const roleData = [roleHeader, ...roleRows.map((r) => [r.label, r.salary, r.headcount])];
+    const roleHeader = ["Type", "Role", "Annual cost, £ (salary inc. on-costs & pension, or all-inclusive contract cost)", "Headcount"];
+    const roleData = [roleHeader, ...roleRows.map((r) => [r.type === "contractor" ? "Contractor" : "Employed", r.label, r.salary, r.headcount])];
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(roleData), "Team and roles");
 
     const resultsData = [
@@ -301,7 +302,7 @@ export default function BNGEconomicsModelDetailed() {
         .bng-row-card { border: 1px solid var(--hairline); background: var(--paper-raised); border-radius: 3px; padding: 12px 14px; margin-bottom: 10px; }
         .bng-row-grid-habitat { display: grid; grid-template-columns: 1.1fr 1.3fr 0.7fr 0.9fr 0.8fr 0.9fr 0.9fr auto; gap: 10px; align-items: end; }
         @media (max-width: 1000px) { .bng-row-grid-habitat { grid-template-columns: 1fr 1fr; } }
-        .bng-row-grid-role { display: grid; grid-template-columns: 1.6fr 1fr 0.7fr auto; gap: 10px; align-items: end; }
+        .bng-row-grid-role { display: grid; grid-template-columns: 0.9fr 1.4fr 1.2fr 0.7fr auto; gap: 10px; align-items: end; }
         @media (max-width: 640px) { .bng-row-grid-role { grid-template-columns: 1fr 1fr; } }
         .bng-row-grid-habitat label, .bng-row-grid-role label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); margin-bottom: 4px; }
         .bng-row-label-input { font-family: 'IBM Plex Sans', sans-serif !important; }
@@ -413,17 +414,24 @@ export default function BNGEconomicsModelDetailed() {
         <div className="bng-field bng-overhead-field">
           <div className="bng-label"><span>Overhead, per head (annual)</span><span className="val">{currency(overheadPerRole)}</span></div>
           <input type="range" min="0" max="30000" step="500" value={overheadPerRole} onChange={(e) => setOverheadPerRole(+e.target.value)} />
-          <div className="bng-note">Flat rate applied per head regardless of role — equipment, admin, vehicle/office share.</div>
+          <div className="bng-note">Flat rate applied per employed head — equipment, admin, vehicle/office share. Doesn't apply to contractors, whose rate is assumed to include their own overhead.</div>
         </div>
         {roleRows.map((r) => (
           <div className="bng-row-card" key={r.id}>
             <div className="bng-row-grid-role">
               <div>
+                <label>Type</label>
+                <select value={r.type} onChange={(e) => updateRoleRow(r.id, "type", e.target.value)}>
+                  <option value="employed">Employed</option>
+                  <option value="contractor">Contractor</option>
+                </select>
+              </div>
+              <div>
                 <label>Role</label>
                 <input className="bng-row-label-input" type="text" value={r.label} onChange={(e) => updateRoleRow(r.id, "label", e.target.value)} />
               </div>
               <div>
-                <label>Full salary inc. on-costs, pension, etc</label>
+                <label>{r.type === "contractor" ? "Annual contract cost (all-inclusive)" : "Full salary inc. on-costs, pension, etc"}</label>
                 <input type="number" min="0" step="500" value={r.salary} onChange={(e) => updateRoleRow(r.id, "salary", Math.max(0, +e.target.value))} />
               </div>
               <div>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — BNG Staffing Economics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EFE6; --paper-raised:#FBF9F3; --ink:#1F2A1D; --ink-soft:#4A5245;
+    --moss:#4B6043; --moss-dark:#37472F; --dyke:#3C6E82; --hairline:#CFC7AC; --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif; font-size:15.5px; line-height:1.6;}
+  h1,h2{font-family:'Fraunces',serif; font-weight:600; margin:0;}
+  a{color:var(--dyke);}
+  .wrap{max-width:920px; margin:0 auto; padding:0 22px;}
+
+  .site-nav{border-bottom:1px solid var(--hairline); background:var(--paper-raised);}
+  .site-nav-inner{max-width:1100px; margin:0 auto; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .site-nav-brand{font-family:'Fraunces',serif; font-weight:600; font-size:15px; color:var(--ink); text-decoration:none;}
+  .site-nav-links{display:flex; gap:4px;}
+  .site-nav-link{font-size:13px; color:var(--ink-soft); text-decoration:none; padding:7px 12px; border-radius:2px;}
+  .site-nav-link:hover{background:var(--paper); color:var(--ink);}
+  .site-nav-link.active{background:var(--moss); color:var(--paper-raised); font-weight:500;}
+  @media (max-width:560px){ .site-nav-inner{flex-direction:column; align-items:flex-start;} }
+
+  .about{padding:50px 0 70px;}
+  .about-grid{display:grid; grid-template-columns:220px 1fr; gap:34px; align-items:start;}
+  @media (max-width:640px){ .about-grid{grid-template-columns:1fr;} }
+
+  .photo-placeholder{
+    width:220px; height:220px; border-radius:var(--radius); background:var(--paper-raised);
+    border:1px dashed var(--hairline); display:flex; align-items:center; justify-content:center;
+    color:var(--ink-soft); font-size:12px; text-align:center; text-transform:uppercase; letter-spacing:0.06em;
+  }
+  @media (max-width:640px){ .photo-placeholder{width:140px; height:140px;} }
+
+  .about h1{font-size:28px; margin-bottom:16px;}
+  .about p{font-size:16px; color:var(--ink); max-width:60ch; margin:0 0 16px;}
+  .about p:last-child{margin-bottom:0;}
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="site-nav-brand">BNG Staffing Economics</a>
+    <nav class="site-nav-links">
+      <a href="/" class="site-nav-link">Home</a>
+      <a href="/simple/" class="site-nav-link">Simple model</a>
+      <a href="/detailed/" class="site-nav-link">Detailed model</a>
+      <a href="/about/" class="site-nav-link active">About</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap about">
+  <div class="about-grid">
+    <div class="photo-placeholder">Photo</div>
+    <div>
+      <h1>About</h1>
+      <p>Hi I'm Lewis and I'm a nature conservation professional of 10 years specialising in land management, landscapes and wetland ecology. I am also building LAMOTT.</p>
+      <p>LAMOTT is a tool the makes tracking the implementation and compliance of nature finance schemes centralised and easy. Track a range of obligations, milestones, measures, risk, activity, and monitoring to ensure there is a robust record for delivery against the commitments made for any nature finance schemes.</p>
+      <p>I have built Lamott in my own time and it is a project of my freelance consultancy Spring Biodiversity. See more and follow the build at <a href="https://lamott.app" target="_blank" rel="noopener noreferrer">lamott.app</a>.</p>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

@@ -104,9 +104,12 @@ export default function BNGEconomicsModelSimple() {
   const [yieldScenario, setYieldScenario] = useState("yieldAvg");
   const [yearsUntilSale, setYearsUntilSale] = useState(0);
   const [upfrontCosts, setUpfrontCosts] = useState(15000);
+  const [staffingType, setStaffingType] = useState("employed"); // "employed" | "contractor" | "blend"
   const [numberOfRoles, setNumberOfRoles] = useState(1);
   const [salaryPerRole, setSalaryPerRole] = useState(35000);
   const [overheadPerRole, setOverheadPerRole] = useState(12000);
+  const [numberOfContractors, setNumberOfContractors] = useState(1);
+  const [contractorAnnualCost, setContractorAnnualCost] = useState(18000);
   const [inflationPct, setInflationPct] = useState(3);
   const [showAssumptions, setShowAssumptions] = useState(false);
 
@@ -156,9 +159,17 @@ export default function BNGEconomicsModelSimple() {
       }, 0);
   }
 
+  // Contractors are assumed to carry their own equipment/admin cost within
+  // their annual rate, so overhead-per-head only applies to employed roles.
+  function staffCosts() {
+    const employedCost = staffingType !== "contractor" ? numberOfRoles * salaryPerRole : 0;
+    const employedOverhead = staffingType !== "contractor" ? numberOfRoles * overheadPerRole : 0;
+    const contractorCost = staffingType !== "employed" ? numberOfContractors * contractorAnnualCost : 0;
+    return { roleCost: employedCost + contractorCost, overheadCost: employedOverhead };
+  }
+
   const calc = useMemo(() => {
-    const roleCost = numberOfRoles * salaryPerRole;
-    const overheadCost = numberOfRoles * overheadPerRole;
+    const { roleCost, overheadCost } = staffCosts();
 
     function statsAt(units) {
       const gross = grossRevenueAt(units);
@@ -187,11 +198,10 @@ export default function BNGEconomicsModelSimple() {
     const hectaresNeeded = categoryUnits.reduce((sum, c) => sum + c.units / c.data[yieldScenario], 0);
 
     return { roleCost, overheadCost, grossRevenue: at.gross, netPot: at.pot, yearsFunded: at.years, reachable, unitsFor30, ceilingYears, hectaresNeeded };
-  }, [profile, totalUnits, yearsUntilSale, upfrontCosts, numberOfRoles, salaryPerRole, overheadPerRole, inflationPct, yieldScenario, categoryUnits, growthFactor]);
+  }, [profile, totalUnits, yearsUntilSale, upfrontCosts, staffingType, numberOfRoles, salaryPerRole, overheadPerRole, numberOfContractors, contractorAnnualCost, inflationPct, yieldScenario, categoryUnits, growthFactor]);
 
   const chartData = useMemo(() => {
-    const roleCost = numberOfRoles * salaryPerRole;
-    const overheadCost = numberOfRoles * overheadPerRole;
+    const { roleCost, overheadCost } = staffCosts();
     const maxUnits = calc.reachable ? Math.max(120, Math.ceil(calc.unitsFor30 * 1.4)) : Math.max(300, totalUnits * 3);
     const step = Math.max(1, Math.round(maxUnits / 40));
     const points = [];
@@ -202,7 +212,7 @@ export default function BNGEconomicsModelSimple() {
       points.push({ units: u, years: Math.round(years * 10) / 10 });
     }
     return points;
-  }, [profile, numberOfRoles, salaryPerRole, overheadPerRole, inflationPct, upfrontCosts, yearsUntilSale, calc.reachable, calc.unitsFor30, totalUnits]);
+  }, [profile, staffingType, numberOfRoles, salaryPerRole, overheadPerRole, numberOfContractors, contractorAnnualCost, inflationPct, upfrontCosts, yearsUntilSale, calc.reachable, calc.unitsFor30, totalUnits]);
 
   return (
     <div className="bng-root">
@@ -246,7 +256,7 @@ export default function BNGEconomicsModelSimple() {
         .bng-toggle-row { display: flex; gap: 6px; }
         .bng-toggle-btn { flex: 1; border: 1px solid var(--hairline); background: var(--paper); color: var(--ink-soft); font-size: 12px; padding: 7px 8px; border-radius: 2px; font-family: inherit; cursor: pointer; }
         .bng-toggle-btn.active { background: var(--moss); border-color: var(--moss); color: var(--paper-raised); font-weight: 500; }
-        .bng-assumptions-toggle { background: none; border: 1px solid var(--hairline); color: var(--ink-soft); font-size: 12px; padding: 8px 13px; border-radius: 2px; font-family: inherit; cursor: pointer; }
+        .bng-assumptions-toggle { background: none; border: 1.5px solid var(--moss); color: var(--moss-dark); font-size: 14.5px; font-weight: 500; padding: 12px 22px; border-radius: 2px; font-family: inherit; cursor: pointer; }
         .bng-assumptions-toggle:hover { border-color: var(--moss); color: var(--moss-dark); }
         .bng-assumptions { border: 1px solid var(--hairline); background: var(--paper-raised); border-radius: 3px; padding: 16px 18px; margin-top: 12px; font-size: 12.5px; color: var(--ink-soft); }
         .bng-assumptions p { margin: 0 0 10px; }
@@ -269,18 +279,45 @@ export default function BNGEconomicsModelSimple() {
               <div className="bng-habitat-note">Legal fees, Responsible Body payment, offsite register fee, and similar one-off costs to establish the bank.</div>
             </div>
             <div className="bng-field">
-              <div className="bng-label"><span>Number of roles to fund</span></div>
-              <input type="number" min="0" max="10" value={numberOfRoles} onChange={(e) => setNumberOfRoles(Math.max(0, +e.target.value))} />
+              <div className="bng-label"><span>Staffing type</span></div>
+              <div className="bng-toggle-row">
+                <button className={`bng-toggle-btn ${staffingType === "employed" ? "active" : ""}`} onClick={() => setStaffingType("employed")}>Employed</button>
+                <button className={`bng-toggle-btn ${staffingType === "contractor" ? "active" : ""}`} onClick={() => setStaffingType("contractor")}>Contractor</button>
+                <button className={`bng-toggle-btn ${staffingType === "blend" ? "active" : ""}`} onClick={() => setStaffingType("blend")}>Blend</button>
+              </div>
             </div>
-            <div className="bng-field">
-              <div className="bng-label"><span>Full salary including on-costs, pension, etc</span><span className="val">{currency(salaryPerRole)}</span></div>
-              <input type="range" min="25000" max="55000" step="500" value={salaryPerRole} onChange={(e) => setSalaryPerRole(+e.target.value)} />
-            </div>
-            <div className="bng-field">
-              <div className="bng-label"><span>Overhead, per role (annual)</span><span className="val">{currency(overheadPerRole)}</span></div>
-              <input type="range" min="0" max="30000" step="500" value={overheadPerRole} onChange={(e) => setOverheadPerRole(+e.target.value)} />
-              <div className="bng-habitat-note">Management time, equipment, admin & infrastructure supporting the role — not the habitat work itself, and not the bank's one-off set-up costs above.</div>
-            </div>
+
+            {(staffingType === "employed" || staffingType === "blend") && (
+              <>
+                <div className="bng-field">
+                  <div className="bng-label"><span>Number of employed roles</span></div>
+                  <input type="number" min="0" max="10" value={numberOfRoles} onChange={(e) => setNumberOfRoles(Math.max(0, +e.target.value))} />
+                </div>
+                <div className="bng-field">
+                  <div className="bng-label"><span>Full salary including on-costs, pension, etc</span><span className="val">{currency(salaryPerRole)}</span></div>
+                  <input type="range" min="25000" max="55000" step="500" value={salaryPerRole} onChange={(e) => setSalaryPerRole(+e.target.value)} />
+                </div>
+                <div className="bng-field">
+                  <div className="bng-label"><span>Overhead, per employed role (annual)</span><span className="val">{currency(overheadPerRole)}</span></div>
+                  <input type="range" min="0" max="30000" step="500" value={overheadPerRole} onChange={(e) => setOverheadPerRole(+e.target.value)} />
+                  <div className="bng-habitat-note">Management time, equipment, admin & infrastructure supporting the role — not the habitat work itself, and not the bank's one-off set-up costs above. Doesn't apply to contractors below, whose rate is assumed to include their own overhead.</div>
+                </div>
+              </>
+            )}
+
+            {(staffingType === "contractor" || staffingType === "blend") && (
+              <>
+                <div className="bng-field">
+                  <div className="bng-label"><span>Number of contractors</span></div>
+                  <input type="number" min="0" max="10" value={numberOfContractors} onChange={(e) => setNumberOfContractors(Math.max(0, +e.target.value))} />
+                </div>
+                <div className="bng-field">
+                  <div className="bng-label"><span>Annual contractor cost (all-inclusive)</span><span className="val">{currency(contractorAnnualCost)}</span></div>
+                  <input type="range" min="5000" max="60000" step="500" value={contractorAnnualCost} onChange={(e) => setContractorAnnualCost(+e.target.value)} />
+                  <div className="bng-habitat-note">Per contractor, per year — assumed to already include their equipment, admin and any markup, so no separate overhead is added on top.</div>
+                </div>
+              </>
+            )}
             <div className="bng-field">
               <div className="bng-label"><span>Annual cost inflation</span><span className="val">{inflationPct}%</span></div>
               <input type="range" min="0" max="8" step="0.5" value={inflationPct} onChange={(e) => setInflationPct(+e.target.value)} />
@@ -389,7 +426,7 @@ export default function BNGEconomicsModelSimple() {
           </div>
 
           <button className="bng-assumptions-toggle" onClick={() => setShowAssumptions((v) => !v)}>
-            {showAssumptions ? "Hide" : "Show"} assumptions
+            {showAssumptions ? "Hide" : "Show"} model assumptions
           </button>
 
           {showAssumptions && (

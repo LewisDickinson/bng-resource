@@ -4,12 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BNG economics model — detailed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  html,body{margin:0;padding:0;background:#F2EFE6;}
+  :root{
+    --paper:#F2EFE6; --paper-raised:#FBF9F3; --ink:#1F2A1D; --ink-soft:#4A5245;
+    --moss:#4B6043; --moss-dark:#37472F; --hairline:#CFC7AC;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper); font-family:'IBM Plex Sans',sans-serif;}
+  a{color:inherit;}
+  .site-nav{border-bottom:1px solid var(--hairline); background:var(--paper-raised);}
+  .site-nav-inner{max-width:1100px; margin:0 auto; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .site-nav-brand{font-family:'Fraunces',serif; font-weight:600; font-size:15px; color:var(--ink); text-decoration:none;}
+  .site-nav-links{display:flex; gap:4px;}
+  .site-nav-link{font-size:13px; color:var(--ink-soft); text-decoration:none; padding:7px 12px; border-radius:2px;}
+  .site-nav-link:hover{background:var(--paper); color:var(--ink);}
+  .site-nav-link.active{background:var(--moss); color:var(--paper-raised); font-weight:500;}
+  @media (max-width:560px){ .site-nav-inner{flex-direction:column; align-items:flex-start;} }
   #root{max-width:1200px;margin:0 auto;padding:20px 16px 60px;}
 </style>
 </head>
 <body>
+  <header class="site-nav">
+    <div class="site-nav-inner">
+      <a href="/" class="site-nav-brand">BNG Staffing Economics</a>
+      <nav class="site-nav-links">
+        <a href="/" class="site-nav-link">Home</a>
+        <a href="/simple/" class="site-nav-link">Simple model</a>
+        <a href="/detailed/" class="site-nav-link active">Detailed model</a>
+        <a href="/about/" class="site-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
   <div id="root"></div>
   <script type="module" src="/src/detailed/main.jsx"></script>
 </body>
